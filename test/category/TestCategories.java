@@ -18,11 +18,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import pages.CategoriesPage;
 
 public class TestCategories {
 
-    public static WebDriver driver;
-    public static WebDriverWait wait;
+    private static WebDriver driver;
+    private static WebDriverWait wait;
+    private static CategoriesPage categoriesPage;
     
     private static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
@@ -34,6 +36,7 @@ public class TestCategories {
         
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, 10);
+        categoriesPage = new CategoriesPage();
 
         driver.manage().window().maximize();
         driver.get("http://bvtest.school.cubes.rs/login");
@@ -81,15 +84,11 @@ public class TestCategories {
     public void testCreateNewCategory() throws InterruptedException {
         System.out.println("@Test (testCreateNewCategory): " + dateFormat.format(new Date()));
 
-        for (int i = 0; i < 3; i++) {
-            WebElement addCategoryButton = driver.findElement(By.linkText("Add category"));
-            addCategoryButton.click();
-
-            WebElement newCategoryName = driver.findElement(By.id("title"));
-            newCategoryName.sendKeys(Helper.getRandomText());
-
-            WebElement saveCategoryButton = driver.findElement(By.id("save-category-button"));
-            saveCategoryButton.click();
+        for (int i = 0; i < 1; i++) {
+            
+            categoriesPage.addNewCategory(driver);
+            
+            
 
             String expectedUrl = "http://bvtest.school.cubes.rs/admin/categories";
             String actualUrl = driver.getCurrentUrl();
@@ -114,22 +113,8 @@ public class TestCategories {
         System.out.println("@Test (testEditCategory): " + dateFormat.format(new Date()));
         
         
-        WebElement table = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("categoriesTable")));
-        List<WebElement> rows = table.findElements(By.cssSelector("tr.ui-sortable-handle"));
+        categoriesPage.editLastCategory(driver, wait);
         
-        System.out.println("Number of rows: " + rows.size());
-        
-//        WebElement firstRow = rows.get(0);
-        WebElement lastRow = rows.get(rows.size()-1);
-        WebElement editButton = lastRow.findElement(By.cssSelector("a[title='Edit']"));
-        editButton.click();
-        
-        WebElement newCategoryName = driver.findElement(By.id("title"));
-        newCategoryName.clear();
-        newCategoryName.sendKeys(Helper.getRandomText());
-
-        WebElement saveCategoryButton = driver.findElement(By.id("save-category-button"));
-        saveCategoryButton.click();
         
         String expectedUrl = "http://bvtest.school.cubes.rs/admin/categories";
             String actualUrl = driver.getCurrentUrl();
@@ -145,11 +130,48 @@ public class TestCategories {
             Assert.assertEquals("Titles doesn't match.", expectedTitle, actualTitle);
         
     }
-
+    
     @Test
-    public void testDeleteCategory() {
-        System.out.println("@BeforeClass (setUpClass): " + dateFormat.format(new Date()));
-        System.out.println("Test delete category");
+    public void testEditFirstCategory() {
+        
+        categoriesPage.editFirstCategory(driver, wait);
         
     }
+    
+    @Test
+    public void testEditRandomCategory() {
+        
+        categoriesPage.editRandomCategory(driver, wait);
+        
+    }
+
+    @Test
+    public void testDeleteFirstCategory() {
+//        System.out.println("@BeforeClass (setUpClass): " + dateFormat.format(new Date()));
+//        System.out.println("Test delete category");
+        
+        categoriesPage.deleteFirstCategory(driver, wait);
+    }
+    
+    @Test
+    public void testDeleteLastCategory() {
+        
+        categoriesPage.deleteLastCategory(driver, wait);
+        
+    }
+    
+    @Test
+    public void testDeleteRandomCategory() {
+        
+        categoriesPage.deleteLastCategory(driver, wait);
+        
+    }
+    
+    @Test
+    public void testAddEditDeleteCategory() {
+        categoriesPage.addNewCategory(driver);
+        categoriesPage.editLastCategory(driver, wait);
+        categoriesPage.deleteLastCategory(driver, wait);
+    }
+    
 }

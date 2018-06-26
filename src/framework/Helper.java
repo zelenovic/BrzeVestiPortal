@@ -6,8 +6,12 @@ public class Helper {
         return (int) (Math.random() * 1000);
     }
     
+    public static int getRandomInteger(int range) {
+        return (int) (Math.random() * range);
+    }
+    
     public static String getRandomText() {
-        return "milan-" + getRandomInteger();
+        return "milomir-" + getRandomInteger();
     }
 
     public static String getRandomUrl() {
